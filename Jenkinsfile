@@ -13,7 +13,7 @@ pipeline {
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
         SONAR_HOST_URL = "http://172.31.22.57:9000"
-        JFROG_URL = "http://13.207.163.246:8082/artifactory"
+        JFROG_URL = "http://65.0.128.88:8082/artifactory"
         NOTIFICATION_EMAIL = "mohammedfaizan2261@gmail.com"
     }
 
