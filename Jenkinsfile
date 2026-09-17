@@ -132,13 +132,29 @@ pipeline {
     }
 
     post {
-        failure {
-            emailext (
-                body: '''${SCRIPT, template="groovy-html.template"}''', 
-                subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed", 
-                mimeType: 'text/html',
-                to: "ashfaque.s510@gmail.com"
-            )
-        }
+    success {
+        emailext (
+            body: '''<html>
+                <body>
+                    <h2>Build Successful! ✅</h2>
+                    <p>Job: ${env.JOB_NAME}</p>
+                    <p>Build Number: ${env.BUILD_NUMBER}</p>
+                    <p>Build Status: SUCCESS</p>
+                    <p>Artifacts have been successfully deployed to JFrog Artifactory</p>
+                    <p>Build URL: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                </body>
+            </html>''', 
+            subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful ✅", 
+            mimeType: 'text/html',
+            to: "ashfaque.s510@gmail.com,mohammedfaizan2261@gmail.com"
+        )
+    }
+    failure {
+        emailext (
+            body: '''${SCRIPT, template="groovy-html.template"}''', 
+            subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed ❌", 
+            mimeType: 'text/html',
+            to: "ashfaque.s510@gmail.com,mohammedfaizan2261@gmail.com"
+        )
     }
 }
