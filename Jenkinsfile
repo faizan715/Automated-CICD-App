@@ -9,7 +9,7 @@ pipeline {
         APP_NAME = "register-app-pipeline"
         RELEASE = "1.0.0"
         DOCKER_USER = "faizan715"
-        DOCKER_CRED_ID = 'docker-hub' // Updated to match Jenkins credentials ID
+        DOCKER_CRED_ID = 'docker-hub'
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
@@ -128,6 +128,17 @@ pipeline {
                     sh "docker rmi ${IMAGE_NAME}:latest || true"
                 }
             }
+        }
+    }
+
+    post {
+        failure {
+            emailext (
+                body: '''${SCRIPT, template="groovy-html.template"}''', 
+                subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed", 
+                mimeType: 'text/html',
+                to: "ashfaque.s510@gmail.com"
+            )
         }
     }
 }
