@@ -12,6 +12,9 @@ pipeline {
         DOCKER_CRED_ID = 'docker-hub'
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        SONAR_HOST_URL = "http://172.31.22.57:9000"
+        JFROG_URL = "http://13.207.163.246:8082/artifactory"
+        NOTIFICATION_EMAIL = "mohammedfaizan2261@gmail.com"
     }
 
     stages {
@@ -27,15 +30,9 @@ pipeline {
             }
         }
 
-        stage("Build Application") {
+        stage("Build & Test Application") {
             steps {
-                sh "mvn clean package"
-            }
-        }
-
-        stage("Test Application") {
-            steps {
-                sh "mvn test"
+                sh "mvn clean test package"
             }
         }
 
@@ -43,7 +40,7 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'SonarQube-token') { 
-                        sh "mvn sonar:sonar -Dsonar.host.url=http://172.31.22.57:9000"
+                        sh "mvn sonar:sonar -Dsonar.host.url=${SONAR_HOST_URL}"
                     }
                 }    
             }
@@ -61,7 +58,7 @@ pipeline {
             steps {
                 rtServer (
                     id: "jfrog-server",
-                    url: "http://13.207.163.246:8082/artifactory",
+                    url: "${JFROG_URL}",
                     credentialsId: "jfrog"
                 )
 
@@ -104,7 +101,7 @@ pipeline {
         stage("Build & Push Docker Image") {
             steps {
                 script {
-                    docker.withRegistry('', DOCKER_CRED_ID) {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CRED_ID) {
                         def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
                         docker_image.push("${IMAGE_TAG}")
                         docker_image.push('latest')
@@ -137,7 +134,7 @@ pipeline {
                 body: '''${SCRIPT, template="groovy-html.template"}''', 
                 subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed", 
                 mimeType: 'text/html',
-                to: "mohammedfaizan2261@gmail.com"
+                to: "${NOTIFICATION_EMAIL}"
             )
         }
         success {
@@ -145,7 +142,7 @@ pipeline {
                 body: '''${SCRIPT, template="groovy-html.template"}''', 
                 subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful", 
                 mimeType: 'text/html',
-                to: "mohammedfaizan2261@gmail.com"
+                to: "${NOTIFICATION_EMAIL}"
             )
         }
     }
