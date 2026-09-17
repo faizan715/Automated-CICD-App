@@ -9,7 +9,7 @@ pipeline {
         APP_NAME = "register-app-pipeline"
         RELEASE = "1.0.0"
         DOCKER_USER = "faizan715"
-        DOCKER_CRED_ID = 'dockerhub' // Jenkins credentials ID for Docker Hub
+        DOCKER_CRED_ID = 'docker-hub' // Updated to match Jenkins credentials ID
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
@@ -23,7 +23,7 @@ pipeline {
 
         stage("Checkout from SCM") {
             steps {
-                git branch: 'main', credentialsId: 'github', url: 'https://github.com/faizan715/Automated-CICD-App'
+                git branch: 'main', credentialsId: 'github-token-auth', url: 'https://github.com/faizan715/Automated-CICD-App'
             }
         }
 
