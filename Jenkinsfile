@@ -154,7 +154,7 @@ pipeline {
                 body: '''${SCRIPT, template="groovy-html.template"}''', 
                 subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed ❌", 
                 mimeType: 'text/html',
-                to: "ashfaque.s510@gmail.com, mohammedfaizan2261@gmail.com"
+                to: "mohammedfaizan2261@gmail.com"
             )
         }
     }
